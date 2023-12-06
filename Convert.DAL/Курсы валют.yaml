@@ -1,0 +1,107 @@
+---
+swagger: "2.0"
+info:
+  title: Курсы валют
+  version: 1.0.0
+  description: Сервис предназначен для получения курсов валют АО «Банк ЦентрКредит».
+  x-ibm-name: rates
+  contact:
+    email: api@bcc.kz
+    url: ""
+paths:
+  /rates:
+    get:
+      operationId: getRates
+      responses:
+        200:
+          description: Успешное получение информации.
+          schema:
+            $ref: '#/definitions/RatesArray'
+      produces:
+      - application/json
+      description: Получение курсов валют АО "Банк ЦентрКредит"
+basePath: /v1/public
+definitions:
+  Rate:
+    type: object
+    properties:
+      currency:
+        type: string
+        example: USD
+        description: Наименование валюты
+      purchase:
+        type: number
+        example: 123
+        description: Курс покупки
+      sell:
+        type: number
+        example: 432
+        description: Курс продажи
+      purchaseDelta:
+        type: number
+        format: float
+        example: 1
+        description: Изменение курса покупки
+      sellDelta:
+        type: number
+        format: float
+        example: 0
+        description: Изменение курса продажи
+      dateTime:
+        type: string
+        format: date-time
+        example: "2021-03-11T15:52:40.000Z"
+        description: Время изменения курса
+    description: Курс валют
+  RatesArray:
+    properties:
+      Rates:
+        type: array
+        items:
+          $ref: '#/definitions/Rate'
+    description: Список курсов валют
+x-ibm-configuration:
+  enforced: true
+  testable: true
+  phase: realized
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Authorization:
+    type: oauth2
+    description: Авторизация посредством вызова запроса с механизмом HTTP Basic аутентификации
+    flow: application
+    scopes:
+      bcc.application.public: Доступ к информационным сервисам Банка
+    tokenUrl: https://api.bcc.kz/bcc/production/v1/auth/token
+security:
+- Authorization:
+  - bcc.application.public
+x-ibm-endpoints:
+- endpointUrl: https://api.bcc.kz:10443/bcc/production
+  description: Альтернативная точка подключения для вызова сервиса в продуктивной
+    среде. Зарегистрированное на портале developer.bcc.kz приложение должно быть в
+    режиме "PRODUCTION"
+  type:
+  - production
+  - development
+- endpointUrl: https://api.bcc.kz/bcc/production
+  description: Точка подключения для вызова сервиса в продуктивной среде. Зарегистрированное
+    на портале developer.bcc.kz приложение должно быть в режиме "PRODUCTION"
+  type:
+  - production
+- endpointUrl: https://api-sandbox.bcc.kz/bcc/production
+  description: Точка подключения для вызова сервисов в песочнице. Зарегистрированное
+    на портале developer.bcc.kz приложение должно быть в режиме "DEVELOPMENT"
+  type:
+  - development
+- endpointUrl: https://api-test.bcc.kz/bcc/production
+  description: Точка подключения для вызова сервисов в тестовой среде. Зарегистрированное
+    на портале developer.bcc.kz приложение должно быть в режиме "DEVELOPMENT"
+  type:
+  - development
+...
