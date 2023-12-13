@@ -18,12 +18,15 @@ namespace Convert.BLL
 
         public decimal ConvertCurrency(string sourceCurrency, string targetCurrency, decimal amount)
         {
+            // Получаем курс обмена
             decimal exchangeRate = _rateService.GetExchangeRate(sourceCurrency, targetCurrency);
 
+            // Выполняем конвертацию
             decimal convertedAmount = amount * exchangeRate;
 
             return convertedAmount;
         }
     }
 }
+
 

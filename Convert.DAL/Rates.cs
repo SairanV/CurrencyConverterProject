@@ -56,11 +56,11 @@ namespace Convert.DAL
 
     public class Root
     {
-        public string disclaimer { get; set; }
-        public string date { get; set; }
-        public int timestamp { get; set; }
-        public string @base { get; set; }
-        public Rates rates { get; set; }
+        public string Disclaimer { get; set; }
+        public DateTime Date { get; set; }
+        public int Timestamp { get; set; }
+        public string Base { get; set; }
+        public Rates Rates { get; set; }
     }
 
 
