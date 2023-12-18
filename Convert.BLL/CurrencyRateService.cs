@@ -12,10 +12,28 @@ namespace Convert.BLL
         {
             _repository = repository;
         }
+        public void UpdateCurrencyRates()
+        {
+            _repository.UpdateCurrencyRates();
+        }
 
+        public Root GetCurrencyRates()
+        {
+            return _repository.GetCurrencyRates();
+        }
+
+        /// <summary>
+        /// Получает курс обмена между двумя валютами.
+        /// </summary>
+        /// <param name="sourceCurrency">Исходная валюта.</param>
+        /// <param name="targetCurrency">Целевая валюта.</param>
+        /// <returns>Курс обмена.</returns>
         public decimal GetExchangeRate(string sourceCurrency, string targetCurrency)
         {
-            var rates = _repository.GetCurrencyRates();
+            var rates = GetCurrencyRates();
+
+            sourceCurrency = sourceCurrency.ToUpper();
+            targetCurrency = targetCurrency.ToUpper();
 
             if (rates != null && rates.Rates != null)
             {
@@ -40,6 +58,13 @@ namespace Convert.BLL
             }
         }
 
+        /// <summary>
+        /// Пытается получить курс валюты из объекта Rates.
+        /// </summary>
+        /// <param name="rates">Объект, содержащий курсы валют.</param>
+        /// <param name="currency">Искомая валюта.</param>
+        /// <param name="rate">Полученный курс валюты.</param>
+        /// <returns>True, если курс валюты найден; в противном случае - false.</returns>
         private bool TryGetRate(Rates rates, string currency, out double rate)
         {
             rate = 0;

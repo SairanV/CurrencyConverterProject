@@ -1,33 +1,79 @@
-﻿using RestSharp;
+﻿using System;
+using System.Configuration;
 using Newtonsoft.Json;
-using Convert.DAL;
+using RestSharp;
 
 namespace Convert.DAL
 {
-    using Newtonsoft.Json;
-    using RestSharp;
-
     public class CurrencyRateRepository
     {
-        private readonly string apiUrl = "https://www.cbr-xml-daily.ru/";
+        private readonly string apiUrl = ConfigurationManager.AppSettings["ApiUrl"];
+        private Root cachedRates;
+        private DateTime lastUpdateTime;
 
+        /// <summary>
+        /// Получает текущие курсы валют.
+        /// </summary>
+        /// <returns>Объект, содержащий информацию о курсах валют.</returns>
+        /// <exception cref="Exception">Возникает при ошибке при получении курсов валют.</exception>
         public Root GetCurrencyRates()
         {
-            var client = new RestClient(apiUrl);
-            var request = new RestRequest("latest.js", Method.Get);
-
-            var response = client.Execute(request);
-
-            if (response.IsSuccessful)
+            // Проверка, нужно ли обновить курсы валют (раз в день)
+            if (cachedRates == null || (DateTime.Now - lastUpdateTime).Days >= 1)
             {
-                var rr = JsonConvert.DeserializeObject<Root>(response.Content);
-                return rr;
+                try
+                {
+                    var client = new RestClient(apiUrl);
+                    var request = new RestRequest("latest.js", Method.Get);
+
+                    var response = client.Execute(request);
+
+                    if (response.IsSuccessful)
+                    {
+                        cachedRates = JsonConvert.DeserializeObject<Root>(response.Content);
+                        lastUpdateTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        throw new Exception($"Ошибка при получении курсов валют. Код ошибки: {response.StatusCode}, Сообщение: {response.ErrorMessage}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка при получении курсов валют: {ex.Message}");
+                }
             }
-            else
+
+            return cachedRates;
+        }
+
+        /// <summary>
+        /// Обновляет текущие курсы валют.
+        /// </summary>
+        /// <exception cref="Exception">Возникает при ошибке при обновлении курсов валют.</exception>
+        public void UpdateCurrencyRates()
+        {
+            try
             {
-                return null;
+                var client = new RestClient(apiUrl);
+                var request = new RestRequest("latest.js", Method.Get);
+
+                var response = client.Execute(request);
+
+                if (response.IsSuccessful)
+                {
+                    cachedRates = JsonConvert.DeserializeObject<Root>(response.Content);
+                    lastUpdateTime = DateTime.Now;
+                }
+                else
+                {
+                    throw new Exception($"Ошибка при обновлении курсов валют. Код ошибки: {response.StatusCode}, Сообщение: {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка при обновлении курсов валют: {ex.Message}");
             }
         }
     }
-
 }
