@@ -11,6 +11,7 @@ namespace Currency.Converter
     class Program
     {
         private static readonly string logFilePath = ConfigurationManager.AppSettings["LogFilePath"];
+
         [STAThread]
         static void Main(string[] args)
         {
