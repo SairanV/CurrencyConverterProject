@@ -42,8 +42,7 @@ namespace Convert.BLL
                 if (!TryGetRate(rates.Rates, sourceCurrency, out sourceRate) ||
                     !TryGetRate(rates.Rates, targetCurrency, out targetRate))
                 {
-                    Console.WriteLine("Не удалось найти курс для одной из валют.");
-                    return 0;
+                    throw new Exception("Не удалось найти курс для одной из валют.");
                 }
 
                 // В данном случае, предполагается, что курс обмена это отношение целевой валюты к исходной
@@ -53,8 +52,7 @@ namespace Convert.BLL
             }
             else
             {
-                Console.WriteLine("Не удалось получить курсы валют.");
-                return 0;
+                throw new Exception("Не удалось получить курсы валют.");
             }
         }
 
@@ -76,8 +74,8 @@ namespace Convert.BLL
                 return true;
             }
 
-            Console.WriteLine($"Не удалось найти курс для валюты {currency}");
-            return false;
+            throw new Exception($"Не удалось найти курс для валюты {currency}");
+            //return false;
         }
     }
 }
